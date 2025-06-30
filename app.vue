@@ -1,8 +1,8 @@
 <template>
   <div>
     <form @submit.prevent="handlerLogin">
-      <input type="text" placeholder="Name" required>
-      <input type="password" placeholder="Password" required>
+      <input v-model="formLoginName" type="text" placeholder="Name" required>
+      <input v-model="formLoginPassword" type="password" placeholder="Password" required>
       <button type="submit">Войти</button>
     </form>
     <NuxtPage />
