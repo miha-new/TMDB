@@ -67,6 +67,10 @@ export default {
       .catch(error => {
         console.error('Error', error)
       })
+
+    return {
+      handlerLogin
+    }
   }
 }
 </script>
