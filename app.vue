@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button @onClick="redirectToAuth">Login</button>
+    <button @click="redirectToAuth">Login</button>
     <NuxtPage />
   </div>
 </template>
@@ -58,10 +58,7 @@ export default {
 
 
     fetch(url)
-      .then(res => {
-        console.log(res)
-        return res.json()
-      })
+      .then(res => res.json())
       .then(data => {
         console.log(data)
       })
