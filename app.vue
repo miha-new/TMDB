@@ -28,7 +28,6 @@ export default {
       console.log(event, value)
       const requestToken = await getRequestToken();
 
-      // Проверка учетных данных
       const isValid = await validateCredentials(requestToken, username, password);
       
       if (isValid) {
@@ -68,10 +67,6 @@ export default {
       .catch(error => {
         console.error('Error', error)
       })
-
-    return {
-      redirectToAuth
-    }
   }
 }
 </script>
