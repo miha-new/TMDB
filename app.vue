@@ -29,18 +29,50 @@ async function getRequestToken() {
 
 async function handlerLogin() {
   const requestToken = await getRequestToken();
-  console.log(formLoginName, formLoginPassword)
-  const isValid = await validateCredentials(requestToken, formLoginName, formLoginPassword);
+  console.log(formLoginName.value, formLoginPassword.value)
+  const isValid = await validateCredentials(requestToken, formLoginName.value, formLoginPassword.value);
   
   if (isValid) {
-    // const sessionId = await createSession(requestToken);
-    // localStorage.setItem('tmdb_session', sessionId);
+    const sessionId = await createSession(requestToken);
+    localStorage.setItem('tmdb_session', sessionId);
     alert('success');
-    // loadUserData();
+    loadUserData();
   } else {
     alert('error');
   }
-};
+}
+
+async function createSession(requestToken) {
+  const response = await fetch(
+    `https://api.themoviedb.org/3/authentication/session/new?api_key=${API_KEY}`,
+    {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({request_token: requestToken})
+    }
+  );
+  const data = await response.json();
+  console.log('session_id', data.session_id)
+  return data.session_id;
+}
+
+async function loadUserData() {
+  const sessionId = localStorage.getItem('tmdb_session');
+  
+  const accountRes = await fetch(
+    `https://api.themoviedb.org/3/account?api_key=${API_KEY}&session_id=${sessionId}`
+  );
+  const account = await accountRes.json();
+  
+  const favoritesRes = await fetch(
+    `https://api.themoviedb.org/3/account/${account.id}/favorite/movies?api_key=${API_KEY}&session_id=${sessionId}`
+  );
+  
+  console.log(`user's data`, {
+    account,
+    favorites: await favoritesRes.json()
+  });
+}
 
 async function validateCredentials(token, username, password) {
   const response = await fetch(
@@ -57,6 +89,22 @@ async function validateCredentials(token, username, password) {
   );
   
   return response.ok;
+}
+
+async function logout() {
+  const sessionId = localStorage.getItem('tmdb_session');
+  
+  await fetch(
+    `https://api.themoviedb.org/3/authentication/session?api_key=${API_KEY}`,
+    {
+      method: 'DELETE',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({session_id: sessionId})
+    }
+  );
+  
+  localStorage.removeItem('tmdb_session');
+  location.reload();
 }
 
 
